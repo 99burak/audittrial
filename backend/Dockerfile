@@ -12,6 +12,8 @@ COPY pyproject.toml ./
 COPY app ./app
 RUN pip install ".[dev]"
 
+COPY alembic.ini ./
+COPY alembic ./alembic
 COPY tests ./tests
 
 USER appuser
@@ -19,4 +21,3 @@ USER appuser
 EXPOSE 8000
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
-
