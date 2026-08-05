@@ -3,7 +3,9 @@ import logging
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
+from starlette.middleware.sessions import SessionMiddleware
 
+from app.api.routes.auth import router as auth_router
 from app.core.config import get_settings
 from app.db.session import check_database_connection
 
@@ -14,6 +16,15 @@ app = FastAPI(
     title=settings.app_name,
     version="0.1.0",
 )
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=settings.session_secret.get_secret_value(),
+    session_cookie="audittrail_session",
+    max_age=settings.session_max_age_seconds,
+    same_site="lax",
+    https_only=settings.session_cookie_secure,
+)
+app.include_router(auth_router, prefix="/api")
 
 
 @app.get("/api/health", tags=["health"])

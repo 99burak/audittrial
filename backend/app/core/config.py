@@ -1,6 +1,8 @@
 from functools import lru_cache
 
-from pydantic import SecretStr
+from typing import Annotated
+
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy import URL
 
@@ -8,6 +10,8 @@ from sqlalchemy import URL
 class Settings(BaseSettings):
     app_name: str = "AuditTrail API"
     app_env: str = "development"
+    session_secret: Annotated[SecretStr, Field(min_length=32)]
+    session_max_age_seconds: int = 8 * 60 * 60
 
     postgres_db: str
     postgres_user: str
@@ -32,8 +36,11 @@ class Settings(BaseSettings):
             database=self.postgres_db,
         )
 
+    @property
+    def session_cookie_secure(self) -> bool:
+        return self.app_env.lower() == "production"
+
 
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
-
