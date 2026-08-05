@@ -6,6 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.api.routes.auth import router as auth_router
+from app.api.routes.users import router as users_router
 from app.core.config import get_settings
 from app.db.session import check_database_connection
 
@@ -25,6 +26,7 @@ app.add_middleware(
     https_only=settings.session_cookie_secure,
 )
 app.include_router(auth_router, prefix="/api")
+app.include_router(users_router, prefix="/api")
 
 
 @app.get("/api/health", tags=["health"])
