@@ -15,3 +15,7 @@ class UserCreate(BaseModel):
             raise ValueError("Username cannot be blank")
         return value
 
+
+class UserStatusUpdate(BaseModel):
+    is_active: bool
+

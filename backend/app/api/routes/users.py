@@ -1,12 +1,12 @@
-from fastapi import APIRouter, HTTPException, status
-from sqlalchemy import select
+from fastapi import APIRouter, HTTPException, Path, status
+from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 
 from app.api.dependencies import AdminUser, DatabaseSession
 from app.core.security import hash_password
 from app.models import User
 from app.schemas.auth import UserResponse
-from app.schemas.users import UserCreate
+from app.schemas.users import UserCreate, UserStatusUpdate
 
 router = APIRouter(prefix="/admin/users", tags=["admin-users"])
 
@@ -49,5 +49,40 @@ def create_user(
             detail="Username already exists",
         ) from None
 
+    return user
+
+
+@router.patch("/{user_id}/status", response_model=UserResponse)
+def update_user_status(
+    status_data: UserStatusUpdate,
+    session: DatabaseSession,
+    admin_user: AdminUser,
+    user_id: int = Path(gt=0),
+) -> User:
+    user = session.get(User, user_id)
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+
+    if user.is_active == status_data.is_active:
+        return user
+
+    if user.role == "admin" and status_data.is_active is False:
+        active_admin_count = session.scalar(
+            select(func.count())
+            .select_from(User)
+            .where(User.role == "admin", User.is_active.is_(True))
+        )
+        if active_admin_count is None or active_admin_count <= 1:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Last active admin cannot be deactivated",
+            )
+
+    user.is_active = status_data.is_active
+    session.commit()
+    session.refresh(user)
     return user
 
