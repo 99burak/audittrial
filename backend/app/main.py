@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 from starlette.middleware.sessions import SessionMiddleware
 
+from app.api.routes.api_keys import router as api_keys_router
 from app.api.routes.applications import router as applications_router
 from app.api.routes.auth import router as auth_router
 from app.api.routes.users import router as users_router
@@ -29,6 +30,7 @@ app.add_middleware(
 app.include_router(auth_router, prefix="/api")
 app.include_router(users_router, prefix="/api")
 app.include_router(applications_router, prefix="/api")
+app.include_router(api_keys_router, prefix="/api")
 
 
 @app.get("/api/health", tags=["health"])
