@@ -1,6 +1,6 @@
 from datetime import UTC, datetime
 
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, HTTPException, Path, Query, status
 from sqlalchemy import func, select
 
 from app.api.dependencies import (
@@ -113,6 +113,21 @@ def list_events(
         page_size=page_size,
         total=total,
     )
+
+
+@router.get("/{event_id}", response_model=AuditEventResponse)
+def get_event_detail(
+    session: DatabaseSession,
+    current_user: CurrentUser,
+    event_id: int = Path(gt=0),
+) -> AuditEventResponse:
+    event = session.get(AuditEvent, event_id)
+    if event is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Audit event not found",
+        )
+    return to_event_response(event)
 
 
 @router.post(

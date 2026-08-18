@@ -42,9 +42,14 @@ class FakeSession:
             return self.current_user
         return self.total
 
-    def get(self, model, object_id: int) -> User | None:
+    def get(self, model, object_id: int) -> User | AuditEvent | None:
         if model is User and self.current_user.id == object_id:
             return self.current_user
+        if model is AuditEvent:
+            return next(
+                (event for event in self.events if event.id == object_id),
+                None,
+            )
         return None
 
     def scalars(self, statement) -> FakeScalarResult:
@@ -224,3 +229,47 @@ def test_event_list_requires_timezone_in_date_filters(
     assert response.json() == {
         "detail": f"{filter_name} must include a timezone"
     }
+
+
+def test_event_detail_requires_authentication(client: TestClient) -> None:
+    use_fake_session(make_user("viewer"), [make_event(1)])
+
+    response = client.get("/api/events/1")
+
+    assert response.status_code == 401
+
+
+@pytest.mark.parametrize("role", ["admin", "viewer"])
+def test_panel_roles_can_view_event_detail(
+    client: TestClient,
+    role: str,
+) -> None:
+    event = make_event(7)
+    use_fake_session(make_user(role), [event])
+    login(client, role)
+
+    response = client.get("/api/events/7")
+
+    assert response.status_code == 200
+    assert response.json()["id"] == 7
+    assert response.json()["actor_id"] == "user-7"
+    assert response.json()["metadata"] == {"source": "test"}
+
+
+def test_event_detail_returns_404_for_unknown_event(client: TestClient) -> None:
+    use_fake_session(make_user("viewer"), [])
+    login(client, "viewer")
+
+    response = client.get("/api/events/999")
+
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Audit event not found"}
+
+
+def test_event_detail_rejects_invalid_id(client: TestClient) -> None:
+    use_fake_session(make_user("viewer"), [])
+    login(client, "viewer")
+
+    response = client.get("/api/events/0")
+
+    assert response.status_code == 422
