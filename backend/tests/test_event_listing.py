@@ -32,9 +32,12 @@ class FakeSession:
         self.events = events
         self.total = total
         self.scalar_call_count = 0
+        self.scalar_statements = []
+        self.scalars_statement = None
 
     def scalar(self, statement):
         self.scalar_call_count += 1
+        self.scalar_statements.append(statement)
         if self.scalar_call_count == 1:
             return self.current_user
         return self.total
@@ -45,6 +48,7 @@ class FakeSession:
         return None
 
     def scalars(self, statement) -> FakeScalarResult:
+        self.scalars_statement = statement
         return FakeScalarResult(self.events)
 
 
@@ -89,7 +93,7 @@ def use_fake_session(
     current_user: User,
     events: list[AuditEvent],
     total: int | None = None,
-) -> None:
+) -> FakeSession:
     fake_session = FakeSession(
         current_user,
         events,
@@ -100,6 +104,7 @@ def use_fake_session(
         yield fake_session
 
     app.dependency_overrides[get_db] = override_get_db
+    return fake_session
 
 
 def login(client: TestClient, role: str) -> None:
@@ -160,3 +165,62 @@ def test_event_list_rejects_invalid_pagination(
     response = client.get(f"/api/events?{query}")
 
     assert response.status_code == 422
+
+
+def test_event_list_applies_all_filters(client: TestClient) -> None:
+    session = use_fake_session(make_user("viewer"), [make_event(1)], total=1)
+    login(client, "viewer")
+
+    response = client.get(
+        "/api/events",
+        params={
+            "application_id": 10,
+            "actor_id": " user-42 ",
+            "action": "invoice.updated",
+            "resource_type": "invoice",
+            "date_from": "2026-08-17T00:00:00+03:00",
+            "date_to": "2026-08-18T23:59:59+03:00",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["total"] == 1
+    count_statement = session.scalar_statements[-1]
+    assert len(count_statement._where_criteria) == 6
+    assert session.scalars_statement is not None
+    assert len(session.scalars_statement._where_criteria) == 6
+
+
+def test_event_list_rejects_reversed_date_range(client: TestClient) -> None:
+    use_fake_session(make_user("viewer"), [])
+    login(client, "viewer")
+
+    response = client.get(
+        "/api/events",
+        params={
+            "date_from": "2026-08-19T00:00:00+03:00",
+            "date_to": "2026-08-18T00:00:00+03:00",
+        },
+    )
+
+    assert response.status_code == 422
+    assert response.json() == {"detail": "date_from cannot be after date_to"}
+
+
+@pytest.mark.parametrize("filter_name", ["date_from", "date_to"])
+def test_event_list_requires_timezone_in_date_filters(
+    client: TestClient,
+    filter_name: str,
+) -> None:
+    use_fake_session(make_user("viewer"), [])
+    login(client, "viewer")
+
+    response = client.get(
+        "/api/events",
+        params={filter_name: "2026-08-18T12:00:00"},
+    )
+
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": f"{filter_name} must include a timezone"
+    }
