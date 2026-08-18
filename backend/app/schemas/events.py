@@ -44,3 +44,10 @@ class AuditEventResponse(BaseModel):
     metadata: dict[str, Any] | None
     occurred_at: datetime
     received_at: datetime
+
+
+class AuditEventListResponse(BaseModel):
+    items: list[AuditEventResponse]
+    page: int
+    page_size: int
+    total: int

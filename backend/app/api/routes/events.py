@@ -1,12 +1,62 @@
 from datetime import UTC, datetime
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Query, status
+from sqlalchemy import func, select
 
-from app.api.dependencies import AuthenticatedApiKey, DatabaseSession
+from app.api.dependencies import (
+    AuthenticatedApiKey,
+    CurrentUser,
+    DatabaseSession,
+)
 from app.models import AuditEvent
-from app.schemas.events import AuditEventCreate, AuditEventResponse
+from app.schemas.events import (
+    AuditEventCreate,
+    AuditEventListResponse,
+    AuditEventResponse,
+)
 
 router = APIRouter(prefix="/events", tags=["events"])
+
+
+def to_event_response(event: AuditEvent) -> AuditEventResponse:
+    return AuditEventResponse(
+        id=event.id,
+        application_id=event.application_id,
+        actor_id=event.actor_id,
+        action=event.action,
+        resource_type=event.resource_type,
+        resource_id=event.resource_id,
+        old_values=event.old_values,
+        new_values=event.new_values,
+        ip_address=event.ip_address,
+        metadata=event.event_metadata,
+        occurred_at=event.occurred_at,
+        received_at=event.received_at,
+    )
+
+
+@router.get("", response_model=AuditEventListResponse)
+def list_events(
+    session: DatabaseSession,
+    current_user: CurrentUser,
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=20, ge=1, le=100),
+) -> AuditEventListResponse:
+    total = session.scalar(select(func.count()).select_from(AuditEvent)) or 0
+    statement = (
+        select(AuditEvent)
+        .order_by(AuditEvent.received_at.desc(), AuditEvent.id.desc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    )
+    events = list(session.scalars(statement).all())
+
+    return AuditEventListResponse(
+        items=[to_event_response(event) for event in events],
+        page=page,
+        page_size=page_size,
+        total=total,
+    )
 
 
 @router.post(
@@ -40,17 +90,4 @@ def create_event(
     session.commit()
     session.refresh(event)
 
-    return AuditEventResponse(
-        id=event.id,
-        application_id=event.application_id,
-        actor_id=event.actor_id,
-        action=event.action,
-        resource_type=event.resource_type,
-        resource_id=event.resource_id,
-        old_values=event.old_values,
-        new_values=event.new_values,
-        ip_address=event.ip_address,
-        metadata=event.event_metadata,
-        occurred_at=event.occurred_at,
-        received_at=event.received_at,
-    )
+    return to_event_response(event)
