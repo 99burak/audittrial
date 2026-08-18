@@ -8,6 +8,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from app.api.routes.api_keys import router as api_keys_router
 from app.api.routes.applications import router as applications_router
 from app.api.routes.auth import router as auth_router
+from app.api.routes.events import router as events_router
 from app.api.routes.users import router as users_router
 from app.core.config import get_settings
 from app.db.session import check_database_connection
@@ -31,6 +32,7 @@ app.include_router(auth_router, prefix="/api")
 app.include_router(users_router, prefix="/api")
 app.include_router(applications_router, prefix="/api")
 app.include_router(api_keys_router, prefix="/api")
+app.include_router(events_router, prefix="/api")
 
 
 @app.get("/api/health", tags=["health"])
