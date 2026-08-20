@@ -4,6 +4,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.api.dependencies import get_db
+from app.core.config import get_settings
 from app.core.security import hash_password
 from app.main import app
 from app.models import User
@@ -126,3 +127,32 @@ def test_logout_clears_session(client: TestClient) -> None:
     assert logout_response.status_code == 204
     assert me_response.status_code == 401
 
+
+def test_cors_allows_configured_frontend_with_credentials(
+    client: TestClient,
+) -> None:
+    frontend_origin = get_settings().frontend_origin
+    response = client.options(
+        "/api/auth/login",
+        headers={
+            "Origin": frontend_origin,
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "content-type",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.headers["access-control-allow-origin"] == frontend_origin
+    assert response.headers["access-control-allow-credentials"] == "true"
+
+
+def test_cors_does_not_allow_unknown_origin(client: TestClient) -> None:
+    response = client.options(
+        "/api/auth/login",
+        headers={
+            "Origin": "https://untrusted.example",
+            "Access-Control-Request-Method": "POST",
+        },
+    )
+
+    assert "access-control-allow-origin" not in response.headers

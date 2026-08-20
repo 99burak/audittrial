@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     app_env: str = "development"
     session_secret: Annotated[SecretStr, Field(min_length=32)]
     session_max_age_seconds: int = 8 * 60 * 60
+    frontend_origin: str = "http://localhost:5173"
 
     postgres_db: str
     postgres_user: str

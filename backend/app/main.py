@@ -1,6 +1,7 @@
 import logging
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 from starlette.middleware.sessions import SessionMiddleware
@@ -27,6 +28,13 @@ app.add_middleware(
     max_age=settings.session_max_age_seconds,
     same_site="lax",
     https_only=settings.session_cookie_secure,
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[settings.frontend_origin],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PATCH"],
+    allow_headers=["Content-Type"],
 )
 app.include_router(auth_router, prefix="/api")
 app.include_router(users_router, prefix="/api")
