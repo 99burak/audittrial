@@ -1,0 +1,161 @@
+:root {
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  color: #172033;
+  background: #f4f6fa;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 1.25rem clamp(1rem, 5vw, 4rem);
+  color: #ffffff;
+  background: #172033;
+}
+
+.topbar h1,
+.page-heading h2,
+.panel h1,
+.panel h3 {
+  margin: 0;
+}
+
+.topbar h1 {
+  font-size: 1.35rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.3rem;
+  color: #6f84ff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.topbar .eyebrow {
+  color: #aeb9ff;
+}
+
+.topbar nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.topbar a {
+  padding: 0.65rem 0.9rem;
+  border-radius: 0.55rem;
+  color: #cbd2e5;
+  text-decoration: none;
+}
+
+.topbar a:hover,
+.topbar a.active {
+  color: #ffffff;
+  background: #2a3650;
+}
+
+.page-container {
+  width: min(1100px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 3rem 0;
+}
+
+.page-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.page-heading h2 {
+  font-size: clamp(1.6rem, 4vw, 2.25rem);
+}
+
+.panel {
+  padding: 1.5rem;
+  border: 1px solid #dfe4ee;
+  border-radius: 0.9rem;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgb(28 39 64 / 6%);
+}
+
+.panel p {
+  margin: 0.7rem 0 0;
+  color: #626d80;
+  line-height: 1.6;
+}
+
+.empty-state {
+  min-height: 240px;
+  display: grid;
+  place-content: center;
+  text-align: center;
+}
+
+.status-badge {
+  padding: 0.45rem 0.7rem;
+  border-radius: 999px;
+  color: #285b44;
+  background: #dcf5e8;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.centered-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: #172033;
+}
+
+.login-panel {
+  width: min(420px, 100%);
+  padding: 2rem;
+}
+
+.muted {
+  color: #626d80;
+}
+
+@media (max-width: 700px) {
+  .topbar,
+  .page-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+}
