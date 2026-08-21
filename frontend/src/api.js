@@ -26,7 +26,10 @@ async function request(path, options = {}) {
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
-    throw new ApiError(data?.detail ?? "The request could not be completed.", response.status);
+    throw new ApiError(
+      data?.detail ?? "The request could not be completed.",
+      response.status,
+    );
   }
 
   return data;
@@ -45,6 +48,10 @@ export function login(credentials) {
 
 export function logout() {
   return request("/auth/logout", { method: "POST" });
+}
+
+export function getEvents() {
+  return request("/events?page=1&page_size=20");
 }
 
 export { ApiError };

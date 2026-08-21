@@ -130,6 +130,86 @@ input {
   text-align: center;
 }
 
+.compact-button {
+  justify-self: center;
+}
+
+.table-panel {
+  padding: 0;
+  overflow: hidden;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+th,
+td {
+  padding: 1rem;
+  border-bottom: 1px solid #e7eaf1;
+  text-align: left;
+  vertical-align: middle;
+}
+
+th {
+  color: #687386;
+  background: #f8f9fc;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+tbody tr:hover {
+  background: #fafbfe;
+}
+
+.date-cell {
+  min-width: 180px;
+  color: #4e596c;
+}
+
+.action-badge {
+  display: inline-block;
+  padding: 0.35rem 0.55rem;
+  border-radius: 0.45rem;
+  color: #3f51b5;
+  background: #edf0ff;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.8rem;
+}
+
+.resource-id {
+  display: block;
+  margin-top: 0.2rem;
+  color: #737d8f;
+  font-size: 0.8rem;
+}
+
+.table-action {
+  text-align: right;
+}
+
+.table-action a {
+  color: #4c61dd;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.table-action a:hover {
+  text-decoration: underline;
+}
+
 .status-badge {
   padding: 0.45rem 0.7rem;
   border-radius: 999px;
