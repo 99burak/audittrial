@@ -18,7 +18,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -132,6 +133,50 @@ input {
 
 .compact-button {
   justify-self: center;
+}
+
+.filter-panel {
+  margin-bottom: 1.5rem;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.filter-grid label {
+  display: grid;
+  gap: 0.45rem;
+  color: #4e596c;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.filter-grid input {
+  min-width: 0;
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #cbd2df;
+  border-radius: 0.55rem;
+  color: #172033;
+  background: #ffffff;
+}
+
+.filter-grid input:focus {
+  border-color: #596ee8;
+  outline: 3px solid rgb(89 110 232 / 18%);
+}
+
+.filter-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.filter-actions .primary-button {
+  margin-top: 0;
 }
 
 .table-panel {
@@ -296,7 +341,8 @@ tbody tr:hover {
 }
 
 .primary-button,
-.secondary-button {
+.secondary-button,
+.outline-button {
   border: 0;
   border-radius: 0.55rem;
   cursor: pointer;
@@ -316,8 +362,16 @@ tbody tr:hover {
   background: #35425d;
 }
 
+.outline-button {
+  padding: 0.8rem 1rem;
+  border: 1px solid #cbd2df;
+  color: #35425d;
+  background: #ffffff;
+}
+
 .primary-button:hover,
-.secondary-button:hover {
+.secondary-button:hover,
+.outline-button:hover {
   filter: brightness(1.08);
 }
 
@@ -361,6 +415,15 @@ tbody tr:hover {
 
   .card-grid {
     grid-template-columns: 1fr;
+  }
+
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-actions {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .pagination {

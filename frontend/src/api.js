@@ -50,10 +50,25 @@ export function logout() {
   return request("/auth/logout", { method: "POST" });
 }
 
-export function getEvents({ page = 1, pageSize = 20 } = {}) {
+export function getEvents({ page = 1, pageSize = 20, filters = {} } = {}) {
   const query = new URLSearchParams({
     page: String(page),
     page_size: String(pageSize),
+  });
+
+  const filterParameters = {
+    application_id: filters.applicationId,
+    actor_id: filters.actorId,
+    action: filters.action,
+    resource_type: filters.resourceType,
+    date_from: filters.dateFrom,
+    date_to: filters.dateTo,
+  };
+
+  Object.entries(filterParameters).forEach(([name, value]) => {
+    if (value) {
+      query.set(name, value);
+    }
   });
 
   return request(`/events?${query.toString()}`);
