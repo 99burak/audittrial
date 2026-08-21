@@ -50,8 +50,13 @@ export function logout() {
   return request("/auth/logout", { method: "POST" });
 }
 
-export function getEvents() {
-  return request("/events?page=1&page_size=20");
+export function getEvents({ page = 1, pageSize = 20 } = {}) {
+  const query = new URLSearchParams({
+    page: String(page),
+    page_size: String(pageSize),
+  });
+
+  return request(`/events?${query.toString()}`);
 }
 
 export { ApiError };

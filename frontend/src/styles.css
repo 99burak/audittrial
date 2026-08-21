@@ -210,6 +210,37 @@ tbody tr:hover {
   text-decoration: underline;
 }
 
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1rem;
+  border-top: 1px solid #e7eaf1;
+  color: #626d80;
+  font-size: 0.85rem;
+}
+
+.pagination-button {
+  padding: 0.55rem 0.8rem;
+  border: 1px solid #cbd2df;
+  border-radius: 0.5rem;
+  color: #35425d;
+  background: #ffffff;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.pagination-button:hover:not(:disabled) {
+  border-color: #596ee8;
+  color: #4c61dd;
+}
+
+.pagination-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 .status-badge {
   padding: 0.45rem 0.7rem;
   border-radius: 999px;
@@ -330,5 +361,10 @@ tbody tr:hover {
 
   .card-grid {
     grid-template-columns: 1fr;
+  }
+
+  .pagination {
+    justify-content: space-between;
+    gap: 0.5rem;
   }
 }

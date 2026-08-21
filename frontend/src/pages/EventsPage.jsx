@@ -8,6 +8,8 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
   timeStyle: "medium",
 });
 
+const PAGE_SIZE = 20;
+
 function formatDate(value) {
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? "—" : dateFormatter.format(date);
@@ -15,6 +17,7 @@ function formatDate(value) {
 
 function EventsPage() {
   const [eventPage, setEventPage] = useState(null);
+  const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
@@ -25,7 +28,7 @@ function EventsPage() {
     setIsLoading(true);
     setError("");
 
-    getEvents()
+    getEvents({ page, pageSize: PAGE_SIZE })
       .then((data) => {
         if (!cancelled) {
           setEventPage(data);
@@ -45,9 +48,13 @@ function EventsPage() {
     return () => {
       cancelled = true;
     };
-  }, [refreshKey]);
+  }, [page, refreshKey]);
 
   const events = eventPage?.items ?? [];
+  const totalPages = Math.max(
+    1,
+    Math.ceil((eventPage?.total ?? 0) / PAGE_SIZE),
+  );
 
   return (
     <section>
@@ -124,6 +131,27 @@ function EventsPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+          <div className="pagination" aria-label="Event list pagination">
+            <button
+              className="pagination-button"
+              type="button"
+              disabled={page === 1}
+              onClick={() => setPage((current) => current - 1)}
+            >
+              Previous
+            </button>
+            <span>
+              Page <strong>{page}</strong> of <strong>{totalPages}</strong>
+            </span>
+            <button
+              className="pagination-button"
+              type="button"
+              disabled={page >= totalPages}
+              onClick={() => setPage((current) => current + 1)}
+            >
+              Next
+            </button>
           </div>
         </div>
       )}
