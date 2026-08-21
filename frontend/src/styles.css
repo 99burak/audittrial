@@ -295,6 +295,86 @@ tbody tr:hover {
   font-weight: 700;
 }
 
+.back-link {
+  color: #4c61dd;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.detail-panel {
+  margin-bottom: 1rem;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin: 0;
+}
+
+.detail-grid div {
+  min-width: 0;
+}
+
+.detail-grid dt {
+  margin-bottom: 0.4rem;
+  color: #737d8f;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.detail-grid dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
+.json-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.json-card {
+  min-width: 0;
+  padding: 1.25rem;
+  border: 1px solid #dfe4ee;
+  border-radius: 0.9rem;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgb(28 39 64 / 6%);
+}
+
+.json-card:last-child {
+  grid-column: 1 / -1;
+}
+
+.json-card h3 {
+  margin: 0 0 0.8rem;
+  font-size: 1rem;
+}
+
+.json-card pre {
+  max-height: 360px;
+  margin: 0;
+  padding: 1rem;
+  overflow: auto;
+  border-radius: 0.6rem;
+  color: #dbe3ff;
+  background: #172033;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .card-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -419,6 +499,15 @@ tbody tr:hover {
 
   .filter-grid {
     grid-template-columns: 1fr;
+  }
+
+  .detail-grid,
+  .json-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .json-card:last-child {
+    grid-column: auto;
   }
 
   .filter-actions {

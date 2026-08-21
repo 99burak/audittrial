@@ -74,4 +74,8 @@ export function getEvents({ page = 1, pageSize = 20, filters = {} } = {}) {
   return request(`/events?${query.toString()}`);
 }
 
+export function getEvent(eventId) {
+  return request(`/events/${eventId}`);
+}
+
 export { ApiError };
