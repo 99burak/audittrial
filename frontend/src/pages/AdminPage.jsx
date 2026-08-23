@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import {
+  createApiKey,
   createApplication,
   getApiKeys,
   getApplications,
@@ -25,6 +26,11 @@ function AdminPage() {
   const [apiKeys, setApiKeys] = useState([]);
   const [areKeysLoading, setAreKeysLoading] = useState(false);
   const [keysError, setKeysError] = useState("");
+  const [keyName, setKeyName] = useState("");
+  const [isKeyCreating, setIsKeyCreating] = useState(false);
+  const [keyCreateError, setKeyCreateError] = useState("");
+  const [createdApiKey, setCreatedApiKey] = useState(null);
+  const [copyStatus, setCopyStatus] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -63,6 +69,10 @@ function AdminPage() {
     let cancelled = false;
     setAreKeysLoading(true);
     setKeysError("");
+    setKeyName("");
+    setKeyCreateError("");
+    setCreatedApiKey(null);
+    setCopyStatus("");
 
     getApiKeys(selectedApplicationId)
       .then((data) => {
@@ -106,6 +116,49 @@ function AdminPage() {
       );
     } finally {
       setIsCreating(false);
+    }
+  }
+
+  async function handleCreateApiKey(event) {
+    event.preventDefault();
+    setIsKeyCreating(true);
+    setKeyCreateError("");
+    setCreatedApiKey(null);
+    setCopyStatus("");
+
+    try {
+      const createdKey = await createApiKey(selectedApplicationId, {
+        name: keyName,
+      });
+      setApiKeys((current) => [
+        ...current,
+        {
+          id: createdKey.id,
+          application_id: createdKey.application_id,
+          name: createdKey.name,
+          key_prefix: createdKey.key_prefix,
+          created_at: createdKey.created_at,
+          last_used_at: null,
+          revoked_at: null,
+        },
+      ]);
+      setCreatedApiKey(createdKey);
+      setKeyName("");
+    } catch (requestError) {
+      setKeyCreateError(
+        requestError.message ?? "Unable to create the API key.",
+      );
+    } finally {
+      setIsKeyCreating(false);
+    }
+  }
+
+  async function copyCreatedApiKey() {
+    try {
+      await navigator.clipboard.writeText(createdApiKey.api_key);
+      setCopyStatus("Copied to clipboard.");
+    } catch {
+      setCopyStatus("Copy failed. Select the key and copy it manually.");
     }
   }
 
@@ -256,6 +309,71 @@ function AdminPage() {
             <span className="status-badge">{apiKeys.length} total</span>
           )}
         </div>
+
+        {selectedApplication && (
+          <form className="key-create-form" onSubmit={handleCreateApiKey}>
+            <label>
+              New key name
+              <input
+                maxLength="100"
+                name="keyName"
+                placeholder="e.g. Production server"
+                required
+                type="text"
+                value={keyName}
+                onChange={(event) => setKeyName(event.target.value)}
+              />
+            </label>
+            <button
+              className="primary-button"
+              disabled={isKeyCreating}
+              type="submit"
+            >
+              {isKeyCreating ? "Creating..." : "Create API key"}
+            </button>
+          </form>
+        )}
+
+        {keyCreateError && (
+          <p className="error-message key-message" role="alert">
+            {keyCreateError}
+          </p>
+        )}
+
+        {createdApiKey && (
+          <div className="created-key" role="status">
+            <div>
+              <h4>Copy this API key now</h4>
+              <p>
+                This is the only time the complete key will be displayed.
+              </p>
+            </div>
+            <div className="secret-row">
+              <input
+                aria-label="New API key"
+                readOnly
+                type="text"
+                value={createdApiKey.api_key}
+                onFocus={(event) => event.target.select()}
+              />
+              <button
+                className="secondary-button"
+                type="button"
+                onClick={copyCreatedApiKey}
+              >
+                Copy
+              </button>
+              <button
+                className="outline-button"
+                type="button"
+                onClick={() => setCreatedApiKey(null)}
+              >
+                Dismiss
+              </button>
+            </div>
+            {copyStatus && <p className="copy-status">{copyStatus}</p>}
+          </div>
+        )}
 
         {!selectedApplication && (
           <p>Create or select an application to view its API keys.</p>

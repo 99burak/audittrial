@@ -93,4 +93,11 @@ export function getApiKeys(applicationId) {
   return request(`/admin/applications/${applicationId}/api-keys`);
 }
 
+export function createApiKey(applicationId, apiKey) {
+  return request(`/admin/applications/${applicationId}/api-keys`, {
+    method: "POST",
+    body: JSON.stringify(apiKey),
+  });
+}
+
 export { ApiError };
