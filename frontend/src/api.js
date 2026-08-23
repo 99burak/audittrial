@@ -89,4 +89,8 @@ export function createApplication(application) {
   });
 }
 
+export function getApiKeys(applicationId) {
+  return request(`/admin/applications/${applicationId}/api-keys`);
+}
+
 export { ApiError };

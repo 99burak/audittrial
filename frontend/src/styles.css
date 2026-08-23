@@ -466,6 +466,11 @@ tbody tr:hover {
   border-bottom: 0;
 }
 
+.selected-application {
+  background: #f5f7ff;
+  box-shadow: inset 3px 0 #596ee8;
+}
+
 .application-item p {
   margin-top: 0.4rem;
   font-size: 0.88rem;
@@ -479,6 +484,64 @@ tbody tr:hover {
 
 .application-meta {
   flex: 0 0 auto;
+  color: #737d8f;
+  font-size: 0.78rem;
+}
+
+.application-actions {
+  flex: 0 0 auto;
+  display: grid;
+  justify-items: end;
+  gap: 0.55rem;
+}
+
+.small-button {
+  padding: 0.5rem 0.7rem;
+  font-size: 0.78rem;
+}
+
+.key-panel {
+  margin-top: 1rem;
+  padding: 0;
+  overflow: hidden;
+}
+
+.key-panel > p {
+  padding: 0 1.5rem 1.5rem;
+}
+
+.key-list {
+  display: grid;
+}
+
+.key-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.15rem 1.5rem;
+  border-bottom: 1px solid #e7eaf1;
+}
+
+.key-item:last-child {
+  border-bottom: 0;
+}
+
+.key-item h4 {
+  margin: 0;
+}
+
+.key-item code {
+  display: inline-block;
+  margin-top: 0.45rem;
+  color: #4c61dd;
+  font-size: 0.82rem;
+}
+
+.key-dates {
+  display: grid;
+  justify-items: end;
+  gap: 0.3rem;
   color: #737d8f;
   font-size: 0.78rem;
 }
@@ -503,6 +566,10 @@ tbody tr:hover {
 .admin-placeholders {
   grid-template-columns: repeat(2, 1fr);
   margin-top: 1rem;
+}
+
+.users-placeholder {
+  grid-template-columns: 1fr;
 }
 
 .centered-page {
@@ -627,6 +694,16 @@ tbody tr:hover {
   }
 
   .application-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .application-actions,
+  .key-dates {
+    justify-items: start;
+  }
+
+  .key-item {
     align-items: flex-start;
     flex-direction: column;
   }
