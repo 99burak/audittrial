@@ -78,4 +78,15 @@ export function getEvent(eventId) {
   return request(`/events/${eventId}`);
 }
 
+export function getApplications() {
+  return request("/admin/applications");
+}
+
+export function createApplication(application) {
+  return request("/admin/applications", {
+    method: "POST",
+    body: JSON.stringify(application),
+  });
+}
+
 export { ApiError };

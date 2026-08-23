@@ -19,7 +19,8 @@ body {
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
 }
 
@@ -381,6 +382,129 @@ tbody tr:hover {
   gap: 1rem;
 }
 
+.admin-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.4fr);
+  gap: 1rem;
+}
+
+.admin-form {
+  align-self: start;
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-form label {
+  display: grid;
+  gap: 0.45rem;
+  color: #4e596c;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.admin-form input,
+.admin-form textarea {
+  width: 100%;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid #cbd2df;
+  border-radius: 0.55rem;
+  color: #172033;
+  background: #ffffff;
+}
+
+.admin-form textarea {
+  resize: vertical;
+}
+
+.admin-form input:focus,
+.admin-form textarea:focus {
+  border-color: #596ee8;
+  outline: 3px solid rgb(89 110 232 / 18%);
+}
+
+.admin-form .primary-button {
+  margin-top: 0;
+}
+
+.admin-list-panel {
+  padding: 0;
+  overflow: hidden;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e7eaf1;
+}
+
+.section-heading h3,
+.application-title h4 {
+  margin: 0;
+}
+
+.admin-list-panel > p {
+  padding: 0 1.5rem 1.5rem;
+}
+
+.application-list {
+  display: grid;
+}
+
+.application-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.15rem 1.5rem;
+  border-bottom: 1px solid #e7eaf1;
+}
+
+.application-item:last-child {
+  border-bottom: 0;
+}
+
+.application-item p {
+  margin-top: 0.4rem;
+  font-size: 0.88rem;
+}
+
+.application-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.application-meta {
+  flex: 0 0 auto;
+  color: #737d8f;
+  font-size: 0.78rem;
+}
+
+.state-badge {
+  padding: 0.3rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.active-state {
+  color: #285b44;
+  background: #dcf5e8;
+}
+
+.inactive-state {
+  color: #7a4650;
+  background: #f7e3e7;
+}
+
+.admin-placeholders {
+  grid-template-columns: repeat(2, 1fr);
+  margin-top: 1rem;
+}
+
 .centered-page {
   min-height: 100vh;
   display: grid;
@@ -495,6 +619,16 @@ tbody tr:hover {
 
   .card-grid {
     grid-template-columns: 1fr;
+  }
+
+  .admin-layout,
+  .admin-placeholders {
+    grid-template-columns: 1fr;
+  }
+
+  .application-item {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .filter-grid {
