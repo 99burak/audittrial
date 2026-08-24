@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import UserManagement from "../components/UserManagement.jsx";
 import {
   createApiKey,
   createApplication,
@@ -542,12 +543,7 @@ function AdminPage() {
           )}
       </section>
 
-      <div className="card-grid admin-placeholders users-placeholder">
-        <article className="panel">
-          <h3>Users</h3>
-          <p>User management will be added after API keys.</p>
-        </article>
-      </div>
+      <UserManagement />
     </section>
   );
 }

@@ -403,7 +403,8 @@ tbody tr:hover {
 }
 
 .admin-form input,
-.admin-form textarea {
+.admin-form textarea,
+.admin-form select {
   width: 100%;
   padding: 0.75rem 0.85rem;
   border: 1px solid #cbd2df;
@@ -417,7 +418,8 @@ tbody tr:hover {
 }
 
 .admin-form input:focus,
-.admin-form textarea:focus {
+.admin-form textarea:focus,
+.admin-form select:focus {
   border-color: #596ee8;
   outline: 3px solid rgb(89 110 232 / 18%);
 }
@@ -671,6 +673,61 @@ tbody tr:hover {
   grid-template-columns: 1fr;
 }
 
+.user-management {
+  margin-top: 2.5rem;
+}
+
+.section-title {
+  margin-bottom: 1rem;
+}
+
+.section-title h3 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.field-hint {
+  color: #737d8f;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.user-list {
+  display: grid;
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.15rem 1.5rem;
+  border-bottom: 1px solid #e7eaf1;
+}
+
+.user-item:last-child {
+  border-bottom: 0;
+}
+
+.user-item h4 {
+  margin: 0;
+}
+
+.user-item p {
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+}
+
+.role-badge {
+  padding: 0.3rem 0.5rem;
+  border-radius: 999px;
+  color: #3f51b5;
+  background: #edf0ff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
 .centered-page {
   min-height: 100vh;
   display: grid;
@@ -825,6 +882,11 @@ tbody tr:hover {
   }
 
   .key-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .user-item {
     align-items: flex-start;
     flex-direction: column;
   }

@@ -26,8 +26,15 @@ async function request(path, options = {}) {
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
+    const detail = data?.detail;
+    const message =
+      typeof detail === "string"
+        ? detail
+        : Array.isArray(detail)
+          ? detail.map((item) => item.msg).filter(Boolean).join("; ")
+          : "The request could not be completed.";
     throw new ApiError(
-      data?.detail ?? "The request could not be completed.",
+      message || "The request could not be completed.",
       response.status,
     );
   }
@@ -112,6 +119,24 @@ export function revokeApiKey(applicationId, apiKeyId) {
     `/admin/applications/${applicationId}/api-keys/${apiKeyId}/revoke`,
     { method: "POST" },
   );
+}
+
+export function getUsers() {
+  return request("/admin/users");
+}
+
+export function createUser(user) {
+  return request("/admin/users", {
+    method: "POST",
+    body: JSON.stringify(user),
+  });
+}
+
+export function updateUserStatus(userId, isActive) {
+  return request(`/admin/users/${userId}/status`, {
+    method: "PATCH",
+    body: JSON.stringify({ is_active: isActive }),
+  });
 }
 
 export { ApiError };
