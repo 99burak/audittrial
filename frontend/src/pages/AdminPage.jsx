@@ -5,6 +5,8 @@ import {
   createApplication,
   getApiKeys,
   getApplications,
+  revokeApiKey,
+  updateApplicationStatus,
 } from "../api.js";
 
 const dateFormatter = new Intl.DateTimeFormat("en", { dateStyle: "medium" });
@@ -23,6 +25,8 @@ function AdminPage() {
   const [description, setDescription] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [createError, setCreateError] = useState("");
+  const [applicationActionError, setApplicationActionError] = useState("");
+  const [updatingApplicationId, setUpdatingApplicationId] = useState(null);
   const [apiKeys, setApiKeys] = useState([]);
   const [areKeysLoading, setAreKeysLoading] = useState(false);
   const [keysError, setKeysError] = useState("");
@@ -31,6 +35,8 @@ function AdminPage() {
   const [keyCreateError, setKeyCreateError] = useState("");
   const [createdApiKey, setCreatedApiKey] = useState(null);
   const [copyStatus, setCopyStatus] = useState("");
+  const [keyActionError, setKeyActionError] = useState("");
+  const [revokingKeyId, setRevokingKeyId] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -73,6 +79,7 @@ function AdminPage() {
     setKeyCreateError("");
     setCreatedApiKey(null);
     setCopyStatus("");
+    setKeyActionError("");
 
     getApiKeys(selectedApplicationId)
       .then((data) => {
@@ -150,6 +157,60 @@ function AdminPage() {
       );
     } finally {
       setIsKeyCreating(false);
+    }
+  }
+
+  async function handleApplicationStatusChange(application) {
+    setUpdatingApplicationId(application.id);
+    setApplicationActionError("");
+
+    try {
+      const updatedApplication = await updateApplicationStatus(
+        application.id,
+        !application.is_active,
+      );
+      setApplications((current) =>
+        current.map((item) =>
+          item.id === updatedApplication.id ? updatedApplication : item,
+        ),
+      );
+    } catch (requestError) {
+      setApplicationActionError(
+        requestError.message ?? "Unable to update the application.",
+      );
+    } finally {
+      setUpdatingApplicationId(null);
+    }
+  }
+
+  async function handleRevokeApiKey(apiKey) {
+    const confirmed = window.confirm(
+      `Revoke the API key "${apiKey.name}"? This cannot be undone.`,
+    );
+    if (!confirmed) {
+      return;
+    }
+
+    setRevokingKeyId(apiKey.id);
+    setKeyActionError("");
+
+    try {
+      const revokedKey = await revokeApiKey(
+        selectedApplicationId,
+        apiKey.id,
+      );
+      setApiKeys((current) =>
+        current.map((item) => (item.id === revokedKey.id ? revokedKey : item)),
+      );
+      if (createdApiKey?.id === revokedKey.id) {
+        setCreatedApiKey(null);
+      }
+    } catch (requestError) {
+      setKeyActionError(
+        requestError.message ?? "Unable to revoke the API key.",
+      );
+    } finally {
+      setRevokingKeyId(null);
     }
   }
 
@@ -234,6 +295,12 @@ function AdminPage() {
             )}
           </div>
 
+          {applicationActionError && (
+            <p className="error-message admin-action-message" role="alert">
+              {applicationActionError}
+            </p>
+          )}
+
           {isLoading && <p aria-live="polite">Loading applications...</p>}
 
           {!isLoading && loadError && (
@@ -277,16 +344,38 @@ function AdminPage() {
                       ID {application.id} · Created{" "}
                       {formatDate(application.created_at)}
                     </span>
-                    <button
-                      aria-pressed={application.id === selectedApplicationId}
-                      className="outline-button small-button"
-                      type="button"
-                      onClick={() => setSelectedApplicationId(application.id)}
-                    >
-                      {application.id === selectedApplicationId
-                        ? "Selected"
-                        : "View keys"}
-                    </button>
+                    <div className="button-row">
+                      <button
+                        aria-pressed={application.id === selectedApplicationId}
+                        className="outline-button small-button"
+                        type="button"
+                        onClick={() =>
+                          setSelectedApplicationId(application.id)
+                        }
+                      >
+                        {application.id === selectedApplicationId
+                          ? "Selected"
+                          : "View keys"}
+                      </button>
+                      <button
+                        className={
+                          application.is_active
+                            ? "danger-button small-button"
+                            : "outline-button small-button"
+                        }
+                        disabled={updatingApplicationId === application.id}
+                        type="button"
+                        onClick={() =>
+                          handleApplicationStatusChange(application)
+                        }
+                      >
+                        {updatingApplicationId === application.id
+                          ? "Updating..."
+                          : application.is_active
+                            ? "Deactivate"
+                            : "Activate"}
+                      </button>
+                    </div>
                   </div>
                 </article>
               ))}
@@ -337,6 +426,12 @@ function AdminPage() {
         {keyCreateError && (
           <p className="error-message key-message" role="alert">
             {keyCreateError}
+          </p>
+        )}
+
+        {keyActionError && (
+          <p className="error-message key-message" role="alert">
+            {keyActionError}
           </p>
         )}
 
@@ -418,14 +513,28 @@ function AdminPage() {
                     </div>
                     <code>{apiKey.key_prefix}...</code>
                   </div>
-                  <div className="key-dates">
-                    <span>Created {formatDate(apiKey.created_at)}</span>
-                    <span>
-                      Last used{" "}
-                      {apiKey.last_used_at
-                        ? formatDate(apiKey.last_used_at)
-                        : "Never"}
-                    </span>
+                  <div className="key-actions">
+                    <div className="key-dates">
+                      <span>Created {formatDate(apiKey.created_at)}</span>
+                      <span>
+                        Last used{" "}
+                        {apiKey.last_used_at
+                          ? formatDate(apiKey.last_used_at)
+                          : "Never"}
+                      </span>
+                    </div>
+                    {!apiKey.revoked_at && (
+                      <button
+                        className="danger-button small-button"
+                        disabled={revokingKeyId === apiKey.id}
+                        type="button"
+                        onClick={() => handleRevokeApiKey(apiKey)}
+                      >
+                        {revokingKeyId === apiKey.id
+                          ? "Revoking..."
+                          : "Revoke"}
+                      </button>
+                    )}
                   </div>
                 </article>
               ))}

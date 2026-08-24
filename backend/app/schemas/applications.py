@@ -24,3 +24,7 @@ class ApplicationResponse(BaseModel):
     is_active: bool
     created_at: datetime
     updated_at: datetime
+
+
+class ApplicationStatusUpdate(BaseModel):
+    is_active: bool

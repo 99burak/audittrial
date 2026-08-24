@@ -1,10 +1,14 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Path, status
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
 from app.api.dependencies import AdminUser, DatabaseSession
 from app.models import Application
-from app.schemas.applications import ApplicationCreate, ApplicationResponse
+from app.schemas.applications import (
+    ApplicationCreate,
+    ApplicationResponse,
+    ApplicationStatusUpdate,
+)
 
 router = APIRouter(prefix="/admin/applications", tags=["admin-applications"])
 
@@ -55,4 +59,27 @@ def create_application(
             detail="Application name already exists",
         ) from None
 
+    return application
+
+
+@router.patch("/{application_id}/status", response_model=ApplicationResponse)
+def update_application_status(
+    status_data: ApplicationStatusUpdate,
+    session: DatabaseSession,
+    admin_user: AdminUser,
+    application_id: int = Path(gt=0),
+) -> Application:
+    application = session.get(Application, application_id)
+    if application is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Application not found",
+        )
+
+    if application.is_active == status_data.is_active:
+        return application
+
+    application.is_active = status_data.is_active
+    session.commit()
+    session.refresh(application)
     return application

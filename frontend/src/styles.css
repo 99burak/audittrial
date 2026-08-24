@@ -495,6 +495,17 @@ tbody tr:hover {
   gap: 0.55rem;
 }
 
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.45rem;
+}
+
+.admin-action-message {
+  margin: 1rem 1.5rem 0 !important;
+  padding: 0.7rem 0.8rem !important;
+}
+
 .small-button {
   padding: 0.5rem 0.7rem;
   font-size: 0.78rem;
@@ -627,6 +638,13 @@ tbody tr:hover {
   font-size: 0.78rem;
 }
 
+.key-actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .state-badge {
   padding: 0.3rem 0.5rem;
   border-radius: 999px;
@@ -694,7 +712,8 @@ tbody tr:hover {
 
 .primary-button,
 .secondary-button,
-.outline-button {
+.outline-button,
+.danger-button {
   border: 0;
   border-radius: 0.55rem;
   cursor: pointer;
@@ -721,14 +740,29 @@ tbody tr:hover {
   background: #ffffff;
 }
 
+.danger-button {
+  padding: 0.6rem 0.8rem;
+  color: #9b2f3e;
+  background: #fde8eb;
+}
+
+.outline-button.small-button,
+.danger-button.small-button {
+  padding: 0.5rem 0.7rem;
+  font-size: 0.78rem;
+}
+
 .primary-button:hover,
 .secondary-button:hover,
-.outline-button:hover {
+.outline-button:hover,
+.danger-button:hover {
   filter: brightness(1.08);
 }
 
 .primary-button:disabled,
-.secondary-button:disabled {
+.secondary-button:disabled,
+.outline-button:disabled,
+.danger-button:disabled {
   cursor: wait;
   opacity: 0.65;
 }
@@ -782,6 +816,12 @@ tbody tr:hover {
   .application-actions,
   .key-dates {
     justify-items: start;
+  }
+
+  .button-row,
+  .key-actions {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .key-item {

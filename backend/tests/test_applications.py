@@ -40,9 +40,18 @@ class FakeSession:
             return self.current_user
         return self.existing_application
 
-    def get(self, model, object_id: int) -> User | None:
+    def get(self, model, object_id: int) -> User | Application | None:
         if model is User and self.current_user.id == object_id:
             return self.current_user
+        if model is Application:
+            return next(
+                (
+                    application
+                    for application in self.applications
+                    if application.id == object_id
+                ),
+                None,
+            )
         return None
 
     def scalars(self, statement) -> FakeScalarResult:
@@ -59,8 +68,9 @@ class FakeSession:
 
     def refresh(self, application: Application) -> None:
         now = datetime.now(UTC)
-        application.id = 3
-        application.created_at = now
+        if self.added_application is application:
+            application.id = 3
+            application.created_at = now
         application.updated_at = now
 
 
@@ -211,3 +221,69 @@ def test_create_application_rejects_blank_name(client: TestClient) -> None:
 
     assert response.status_code == 422
     assert session.added_application is None
+
+
+def test_viewer_cannot_update_application_status(client: TestClient) -> None:
+    viewer = make_user("viewer")
+    application = make_application(1, "Billing")
+    session = use_fake_session(viewer, [application])
+    login(client, "viewer")
+
+    response = client.patch(
+        "/api/admin/applications/1/status",
+        json={"is_active": False},
+    )
+
+    assert response.status_code == 403
+    assert application.is_active is True
+    assert session.committed is False
+
+
+def test_admin_can_update_application_status(client: TestClient) -> None:
+    admin = make_user("admin")
+    application = make_application(1, "Billing")
+    session = use_fake_session(admin, [application])
+    login(client, "admin")
+
+    response = client.patch(
+        "/api/admin/applications/1/status",
+        json={"is_active": False},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["is_active"] is False
+    assert application.is_active is False
+    assert session.committed is True
+
+
+def test_update_application_status_returns_404(client: TestClient) -> None:
+    admin = make_user("admin")
+    session = use_fake_session(admin, [])
+    login(client, "admin")
+
+    response = client.patch(
+        "/api/admin/applications/999/status",
+        json={"is_active": False},
+    )
+
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Application not found"}
+    assert session.committed is False
+
+
+def test_updating_application_to_current_status_is_safe(
+    client: TestClient,
+) -> None:
+    admin = make_user("admin")
+    application = make_application(1, "Billing")
+    session = use_fake_session(admin, [application])
+    login(client, "admin")
+
+    response = client.patch(
+        "/api/admin/applications/1/status",
+        json={"is_active": True},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["is_active"] is True
+    assert session.committed is False

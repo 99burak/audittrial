@@ -89,6 +89,13 @@ export function createApplication(application) {
   });
 }
 
+export function updateApplicationStatus(applicationId, isActive) {
+  return request(`/admin/applications/${applicationId}/status`, {
+    method: "PATCH",
+    body: JSON.stringify({ is_active: isActive }),
+  });
+}
+
 export function getApiKeys(applicationId) {
   return request(`/admin/applications/${applicationId}/api-keys`);
 }
@@ -98,6 +105,13 @@ export function createApiKey(applicationId, apiKey) {
     method: "POST",
     body: JSON.stringify(apiKey),
   });
+}
+
+export function revokeApiKey(applicationId, apiKeyId) {
+  return request(
+    `/admin/applications/${applicationId}/api-keys/${apiKeyId}/revoke`,
+    { method: "POST" },
+  );
 }
 
 export { ApiError };
