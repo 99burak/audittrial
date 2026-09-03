@@ -376,12 +376,6 @@ tbody tr:hover {
   overflow-wrap: anywhere;
 }
 
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-}
-
 .admin-layout {
   display: grid;
   grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.4fr);
@@ -664,15 +658,6 @@ tbody tr:hover {
   background: #f7e3e7;
 }
 
-.admin-placeholders {
-  grid-template-columns: repeat(2, 1fr);
-  margin-top: 1rem;
-}
-
-.users-placeholder {
-  grid-template-columns: 1fr;
-}
-
 .user-management {
   margin-top: 2.5rem;
 }
@@ -856,12 +841,7 @@ tbody tr:hover {
     border-left: 0;
   }
 
-  .card-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .admin-layout,
-  .admin-placeholders {
+  .admin-layout {
     grid-template-columns: 1fr;
   }
 
