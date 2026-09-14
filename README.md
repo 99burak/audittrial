@@ -33,14 +33,6 @@ Applications send events with their own API keys. Panel users have either the `a
 ![Docker Compose](https://img.shields.io/badge/Docker_Compose-orchestration-2496ED?logo=docker&logoColor=white)
 ![Environment](https://img.shields.io/badge/.env-configuration-ECD53F)
 
-
-## Technology stack
-
-- Backend: Python, FastAPI, SQLAlchemy 2, Alembic, Pydantic, and Pytest
-- Database: PostgreSQL
-- Frontend: React, Vite, JavaScript, React Router, and CSS
-- Infrastructure: Docker, Docker Compose, and `.env` configuration
-
 ## Main features
 
 - Cookie-based panel login and logout
