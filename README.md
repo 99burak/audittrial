@@ -4,6 +4,36 @@ AuditTrail is a full-stack web application that collects user activity records f
 
 Applications send events with their own API keys. Panel users have either the `admin` or `viewer` role. Public user registration is not available.
 
+## Planned Tech Stack
+
+### Backend
+
+![Python](https://img.shields.io/badge/Python-backend-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-framework-009688?logo=fastapi&logoColor=white)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2-D71F00)
+![Alembic](https://img.shields.io/badge/Alembic-migrations-6BA81E)
+![Pydantic](https://img.shields.io/badge/Pydantic-validation-E92063?logo=pydantic&logoColor=white)
+![Pytest](https://img.shields.io/badge/Pytest-testing-0A9EDC?logo=pytest&logoColor=white)
+
+### Database
+
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-database-4169E1?logo=postgresql&logoColor=white)
+
+### Frontend
+
+![React](https://img.shields.io/badge/React-frontend-61DAFB?logo=react&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-build%20tool-646CFF?logo=vite&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-language-F7DF1E?logo=javascript&logoColor=white)
+![React Router](https://img.shields.io/badge/React_Router-routing-CA4245?logo=reactrouter&logoColor=white)
+![CSS](https://img.shields.io/badge/CSS-styling-663399?logo=css&logoColor=white)
+
+### Infrastructure
+
+![Docker](https://img.shields.io/badge/Docker-containers-2496ED?logo=docker&logoColor=white)
+![Docker Compose](https://img.shields.io/badge/Docker_Compose-orchestration-2496ED?logo=docker&logoColor=white)
+![Environment](https://img.shields.io/badge/.env-configuration-ECD53F)
+
+
 ## Technology stack
 
 - Backend: Python, FastAPI, SQLAlchemy 2, Alembic, Pydantic, and Pytest
